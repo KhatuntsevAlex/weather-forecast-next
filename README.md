@@ -175,21 +175,21 @@ npm start            # Serve production build
 
 ## Scripts
 
-| Script                  | Description                                             |
-| ----------------------- | ------------------------------------------------------- |
-| `npm run dev`           | Start dev server (Turbopack)                            |
-| `npm run build`         | Production build                                        |
-| `npm start`             | Serve production build                                  |
-| `npm run lint`          | ESLint                                                  |
-| `npm run typecheck`     | TypeScript compile check (`tsc --noEmit`)               |
-| `npm run format`        | Prettier write                                          |
-| `npm run format:check`  | Prettier check (used by CI)                             |
-| `npm test`              | Run unit tests once (Vitest)                            |
-| `npm run test:watch`    | Run tests in watch mode                                 |
-| `npm run test:coverage` | Run tests with coverage report (70% threshold)          |
-| `npm run test:e2e`      | Run Playwright E2E tests                                |
-| `npm run test:e2e:ui`   | Run Playwright with interactive UI                      |
-| `npm run analyze`       | Build with `@next/bundle-analyzer` (opens HTML reports) |
+| Script                  | Description                                                               |
+| ----------------------- | ------------------------------------------------------------------------- |
+| `npm run dev`           | Start dev server (Turbopack)                                              |
+| `npm run build`         | Production build                                                          |
+| `npm start`             | Serve production build                                                    |
+| `npm run lint`          | ESLint                                                                    |
+| `npm run typecheck`     | TypeScript compile check (`tsc --noEmit`)                                 |
+| `npm run format`        | Prettier write                                                            |
+| `npm run format:check`  | Prettier check (used by CI)                                               |
+| `npm test`              | Run unit tests once (Vitest)                                              |
+| `npm run test:watch`    | Run tests in watch mode                                                   |
+| `npm run test:coverage` | Run tests with coverage report (70% threshold)                            |
+| `npm run test:e2e`      | Run Playwright E2E tests                                                  |
+| `npm run test:e2e:ui`   | Run Playwright with interactive UI                                        |
+| `npm run analyze`       | Run `next experimental-analyze` (interactive UI at http://127.0.0.1:4000) |
 
 ## Commit Convention
 
@@ -212,7 +212,7 @@ Bypass in emergencies: `git commit --no-verify` / `git push --no-verify`.
 GitHub Actions workflows under `.github/workflows/`:
 
 - **ci.yml** — on every PR and push to `main`: `format:check` → `lint` → `typecheck` → `test:coverage` → `build` → `npm audit`. Separate jobs run `commitlint` on PRs, Playwright E2E, and a bundle-analyzer report uploaded as an artifact.
-- **lighthouse.yml** — builds and serves the app, then runs [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) against configured budgets (performance ≥ 70, a11y / best-practices / SEO ≥ 95).
+- **lighthouse.yml** — runs on each Vercel `deployment_status: success` (both preview and production) and audits the **live URL** with [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) against configured budgets (performance ≥ 70, a11y / best-practices / SEO ≥ 95). Can also be triggered manually via `workflow_dispatch`.
 - **codeql.yml** — GitHub's static analysis for JS/TS with `security-and-quality` queries, runs on push, PR, and weekly schedule.
 - **release-please.yml** — [release-please](https://github.com/googleapis/release-please-action) opens a rolling "Release PR" based on Conventional Commits; merging it bumps the version, updates `CHANGELOG.md`, and tags a GitHub Release.
 - **dependabot.yml** — weekly updates for npm dependencies (grouped dev/prod) and GitHub Actions.
