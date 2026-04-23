@@ -6,3 +6,9 @@ export {
   THEME_RESOLVED_COOKIE,
 } from "./model/ThemeProvider";
 export type { Theme, ResolvedTheme } from "./model/ThemeProvider";
+export {
+  parseTheme,
+  parseResolvedTheme,
+  DEFAULT_THEME,
+  DEFAULT_RESOLVED_THEME,
+} from "./model/themeCookies";
