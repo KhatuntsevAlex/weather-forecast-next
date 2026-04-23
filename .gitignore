@@ -12,6 +12,9 @@
 
 # testing
 /coverage
+/playwright-report
+/test-results
+/.lighthouseci
 
 # next.js
 /.next/
@@ -32,10 +35,17 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
 
 # vercel
 .vercel
 
 # typescript
 *.tsbuildinfo
+
+# serwist
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+public/workbox-*.js
 next-env.d.ts
