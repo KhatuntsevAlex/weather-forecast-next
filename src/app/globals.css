@@ -1,26 +1,160 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+  --animate-fade-in: fade-in 0.5s ease-out;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Register color tokens so Tailwind generates utilities like bg-surface
+   that reference var(--color-surface) at runtime (not inlined). */
+@theme {
+  --color-background: hsl(220, 20%, 97%);
+  --color-foreground: hsl(220, 25%, 10%);
+  --color-surface: hsla(220, 20%, 92%, 0.7);
+  --color-surface-hover: hsla(220, 20%, 88%, 0.8);
+  --color-border: hsla(220, 15%, 80%, 0.5);
+  --color-border-hover: hsla(195, 80%, 45%, 0.5);
+  --color-muted: hsla(220, 15%, 70%, 0.6);
+  --color-muted-foreground: hsl(220, 15%, 40%);
+}
+
+/* ── Light theme (non-Tailwind vars) ─────────────────── */
+:root {
+  --glass-bg: hsla(220, 20%, 96%, 0.7);
+  --glass-shadow: hsla(220, 30%, 70%, 0.2);
+  --glass-shadow-hover: hsla(195, 80%, 45%, 0.15);
+  --accent-glow: hsla(195, 80%, 45%, 0.2);
+  --toast-bg: hsla(220, 20%, 96%, 0.95);
+  --toast-border: hsla(220, 15%, 80%, 0.4);
+  --toast-color: hsl(220, 25%, 10%);
+  --chart-axis: hsla(220, 15%, 30%, 0.7);
+  --chart-grid: hsla(220, 15%, 30%, 0.15);
+  --chart-tooltip-bg: hsl(220, 25%, 10%);
+  --chart-tooltip-border: hsla(220, 15%, 30%, 0.8);
+  --chart-tooltip-color: hsl(0, 0%, 100%);
+  --chart-cursor: hsla(220, 15%, 30%, 0.1);
+}
+
+/* ── Dark theme ──────────────────────────────────────── */
+.dark {
+  --color-background: hsl(220, 25%, 8%);
+  --color-foreground: hsl(0, 0%, 96%);
+  --color-surface: hsla(220, 25%, 20%, 0.6);
+  --color-surface-hover: hsla(220, 25%, 25%, 0.7);
+  --color-border: hsla(220, 15%, 35%, 0.3);
+  --color-border-hover: hsla(195, 95%, 55%, 0.4);
+  --color-muted: hsla(0, 0%, 100%, 0.5);
+  --color-muted-foreground: hsla(0, 0%, 100%, 0.6);
+  --glass-bg: hsla(220, 25%, 20%, 0.6);
+  --glass-shadow: hsla(220, 40%, 5%, 0.3);
+  --glass-shadow-hover: hsla(195, 95%, 55%, 0.3);
+  --accent-glow: hsla(195, 95%, 55%, 0.3);
+  --toast-bg: hsla(220, 25%, 20%, 0.9);
+  --toast-border: hsla(220, 15%, 35%, 0.3);
+  --toast-color: #fff;
+  --chart-axis: hsla(0, 0%, 100%, 0.7);
+  --chart-grid: hsla(0, 0%, 100%, 0.1);
+  --chart-tooltip-bg: hsl(0, 0%, 100%);
+  --chart-tooltip-border: hsla(220, 15%, 60%, 0.5);
+  --chart-tooltip-color: hsl(220, 30%, 8%);
+  --chart-cursor: hsla(0, 0%, 100%, 0.1);
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  transition:
+    background-color 300ms ease,
+    color 300ms ease;
+  /* Respect notched device safe areas (mobile-first, viewport-fit=cover). */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.dark body,
+body:is(.dark *) {
+  background-image:
+    radial-gradient(ellipse at 20% 20%, hsla(270, 75%, 65%, 0.15) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 80%, hsla(195, 95%, 55%, 0.15) 0%, transparent 50%);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: 100% 100%;
+}
+
+/* Glassmorphism panel */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px) saturate(180%);
+  border: 1px solid var(--color-border);
+  border-radius: 1rem;
+  box-shadow: 0 10px 15px -3px var(--glass-shadow);
+  /* Only animate paint-phase properties to avoid layout thrash. */
+  transition:
+    border-color 250ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.glass-panel:hover {
+  border-color: var(--color-border-hover);
+  box-shadow:
+    0 20px 25px -5px var(--glass-shadow),
+    0 0 20px var(--glass-shadow-hover);
+}
+
+/* Reduce motion: disable animations but keep hover transitions */
+@media (prefers-reduced-motion: reduce) {
+  .glass-panel {
+    backdrop-filter: none;
+  }
+
+  .dark .glass-panel {
+    background: hsla(220, 25%, 20%, 0.85);
+  }
+
+  .animate-fade-in {
+    animation: none;
+  }
+}
+
+/* Global focus-visible indicator */
+*:focus-visible {
+  outline: 2px solid #22d3ee;
+  outline-offset: 2px;
+}
+
+/* Glassmorphism panels respond to focus-within like hover */
+.glass-panel:focus-within {
+  border-color: hsla(195, 95%, 55%, 0.4);
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-muted);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted-foreground);
 }
