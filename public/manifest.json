@@ -1,0 +1,28 @@
+{
+  "id": "/",
+  "name": "Weather Forecast",
+  "short_name": "Weather",
+  "description": "Real-time weather forecasts for any city",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#0f1621",
+  "theme_color": "#0f1621",
+  "orientation": "portrait",
+  "categories": ["weather", "utilities"],
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Favorites",
+      "short_name": "Favorites",
+      "description": "View your saved cities",
+      "url": "/favorites"
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+build
+coverage
+playwright-report
+test-results
+.lighthouseci
+.next/analyze
+public/sw.js
+public/sw.js.map
+public/swe-worker-*.js
+public/workbox-*.js
+package-lock.json
+CHANGELOG.md
+next-env.d.ts
