@@ -1,19 +1,25 @@
 name: Lighthouse CI
 
 on:
-  pull_request:
-    branches: [main]
-  push:
-    branches: [main]
+  # Runs after Vercel (or any provider) reports a deployment_status = success.
+  # This audits the real preview / production URL instead of a local build.
+  deployment_status:
   workflow_dispatch:
+    inputs:
+      url:
+        description: "URL to audit (defaults to production)"
+        required: false
+        default: "https://weather-forecast-next-one.vercel.app"
 
 concurrency:
-  group: lighthouse-${{ github.ref }}
+  group: lighthouse-${{ github.event.deployment_status.deployment_url || github.event.inputs.url || github.ref }}
   cancel-in-progress: true
 
 jobs:
   lighthouse:
-    name: Lighthouse (mobile)
+    name: Lighthouse (desktop)
+    # Only run for successful deployments (skip pending/error/failure states)
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -27,15 +33,26 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Build
-        run: npm run build
-        env:
-          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+      - name: Resolve target URL
+        id: target
+        run: |
+          URL="${{ github.event.deployment_status.environment_url || github.event.deployment_status.target_url || github.event.inputs.url }}"
+          if [ -z "$URL" ]; then
+            URL="https://weather-forecast-next-one.vercel.app"
+          fi
+          # Strip trailing slash
+          URL="${URL%/}"
+          echo "url=$URL" >> "$GITHUB_OUTPUT"
+          echo "Auditing: $URL"
 
-      - name: Run Lighthouse CI
-        run: npx --yes @lhci/cli@latest autorun
+      - name: Run Lighthouse CI against live URL
+        run: |
+          npx --yes @lhci/cli@latest autorun \
+            --config=./lighthouserc.live.json \
+            --collect.url="$URL" \
+            --collect.url="$URL/favorites"
         env:
-          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          URL: ${{ steps.target.outputs.url }}
 
       - name: Upload Lighthouse reports
         if: always()
