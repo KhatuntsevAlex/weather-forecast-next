@@ -1,0 +1,8 @@
+npx lint-staged
+
+# Scan staged changes for committed secrets if gitleaks is installed locally.
+# Optional: `brew install gitleaks` / `scoop install gitleaks` / see https://github.com/gitleaks/gitleaks
+# This is a defensive local check; CI also runs gitleaks on every push (.github/workflows/gitleaks.yml).
+if command -v gitleaks >/dev/null 2>&1; then
+  gitleaks protect --staged --redact --no-banner
+fi
