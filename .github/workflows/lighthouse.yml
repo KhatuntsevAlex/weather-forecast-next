@@ -50,9 +50,13 @@ jobs:
           npx --yes @lhci/cli@latest autorun \
             --config=./lighthouserc.live.json \
             --collect.url="$URL" \
-            --collect.url="$URL/favorites"
+            --collect.url="$URL/favorites" \
+            --collect.settings.extraHeaders="{\"x-vercel-protection-bypass\":\"${BYPASS}\"}"
         env:
           URL: ${{ steps.target.outputs.url }}
+          BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
+          OPENWEATHER_BASE_URL: ${{ secrets.OPENWEATHER_BASE_URL }}
 
       - name: Upload Lighthouse reports
         if: always()
