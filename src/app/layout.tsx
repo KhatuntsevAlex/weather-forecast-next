@@ -5,8 +5,8 @@ import {
   ThemeProvider,
   THEME_COOKIE,
   THEME_RESOLVED_COOKIE,
-  type Theme,
-  type ResolvedTheme,
+  parseTheme,
+  parseResolvedTheme,
 } from "@/features/theme-toggle";
 import { Header } from "@/widgets/header";
 import { InstallPrompt } from "@/features/pwa";
@@ -61,20 +61,11 @@ export default async function RootLayout({
   // class on first paint — no inline bootstrap script, no FOUC, and no
   // React 19 "Encountered a script tag" warning.
   const cookieStore = await cookies();
-  const storedTheme = cookieStore.get(THEME_COOKIE)?.value;
-  const storedResolved = cookieStore.get(THEME_RESOLVED_COOKIE)?.value;
-  const initialTheme: Theme =
-    storedTheme === "light" || storedTheme === "dark" || storedTheme === "system"
-      ? storedTheme
-      : "dark";
-  const initialResolvedTheme: ResolvedTheme =
-    storedResolved === "light"
-      ? "light"
-      : storedResolved === "dark"
-        ? "dark"
-        : initialTheme === "light"
-          ? "light"
-          : "dark";
+  const initialTheme = parseTheme(cookieStore.get(THEME_COOKIE)?.value);
+  const initialResolvedTheme = parseResolvedTheme(
+    cookieStore.get(THEME_RESOLVED_COOKIE)?.value,
+    initialTheme,
+  );
 
   return (
     <html

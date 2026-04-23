@@ -8,6 +8,15 @@ const eslintConfig = defineConfig([
   ...nextVitals,
   ...nextTs,
   prettier,
+  // Ban nested ternaries — they turn into unreadable pyramids fast.
+  // Max one level of `cond ? a : b`; use early returns / helper functions
+  // / if/else for anything deeper.
+  {
+    files: ["**/*.{ts,tsx,js,jsx,mjs,cjs}"],
+    rules: {
+      "no-nested-ternary": "error",
+    },
+  },
   // Feature-Sliced Design: enforce layer boundaries for files under src/.
   // Layers, bottom-up: shared -> entities -> features -> widgets -> app.
   // A layer may import from the layers below it and from itself.
