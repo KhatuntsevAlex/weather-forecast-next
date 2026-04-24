@@ -1,6 +1,7 @@
 export { Button, buttonClass } from "./Button";
 export type { ButtonVariant, ButtonSize } from "./Button";
 export { IconButton } from "./IconButton";
+export { ScrollArrow } from "./ScrollArrow";
 export { Card } from "./Card";
 export { Input } from "./Input";
 export { FieldError } from "./FieldError";

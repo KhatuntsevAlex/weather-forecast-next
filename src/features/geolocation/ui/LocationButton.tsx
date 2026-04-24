@@ -37,7 +37,7 @@ export function LocationButton() {
     >
       {isLoadingLocation ? (
         <svg
-          className="h-5 w-5 animate-spin text-cyan-400"
+          className="size-5 animate-spin text-cyan-400"
           viewBox="0 0 24 24"
           fill="none"
           aria-hidden="true"
@@ -52,7 +52,7 @@ export function LocationButton() {
         </svg>
       ) : (
         <svg
-          className="text-muted-foreground h-5 w-5"
+          className="text-muted-foreground size-5"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

@@ -9,7 +9,7 @@ export function ThemeToggle() {
   const mounted = useHydrated();
 
   if (!mounted) {
-    return <div className="h-10 w-10" />;
+    return <div className="size-10" />;
   }
 
   const isDark = resolvedTheme === "dark";
@@ -22,7 +22,7 @@ export function ThemeToggle() {
     >
       {isDark ? (
         <svg
-          className="h-5 w-5 text-yellow-400"
+          className="size-5 text-yellow-400"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -34,7 +34,7 @@ export function ThemeToggle() {
         </svg>
       ) : (
         <svg
-          className="h-5 w-5 text-slate-700"
+          className="size-5 text-slate-700"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"

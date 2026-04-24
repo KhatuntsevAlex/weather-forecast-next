@@ -4,7 +4,7 @@ import { LazyVisible } from "@/shared/ui/LazyVisible";
 
 type Entry = { isIntersecting: boolean };
 type ObserverCb = (entries: Entry[]) => void;
-const instances: Array<{ cb: ObserverCb; disconnect: () => void; observe: () => void }> = [];
+const instances: Array<{ cb: ObserverCb; disconnect: VoidFunction; observe: VoidFunction }> = [];
 
 class MockIO {
   cb: ObserverCb;
