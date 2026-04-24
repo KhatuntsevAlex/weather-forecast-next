@@ -18,8 +18,13 @@ concurrency:
 jobs:
   lighthouse:
     name: Lighthouse (desktop)
-    # Only run for successful deployments (skip pending/error/failure states)
-    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
+    # Only run for successful PRODUCTION deployments.
+    # Preview deployments on Vercel include X-Robots-Tag: noindex which
+    # drops Lighthouse SEO below 0.95 and cannot be disabled.
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.deployment_status.state == 'success' &&
+       github.event.deployment_status.environment == 'Production')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -45,18 +50,24 @@ jobs:
           echo "url=$URL" >> "$GITHUB_OUTPUT"
           echo "Auditing: $URL"
 
+      - name: Warm up URLs
+        run: |
+          for i in 1 2 3; do
+            curl -s -o /dev/null "$URL/" || true
+            curl -s -o /dev/null "$URL/favorites" || true
+            sleep 2
+          done
+        env:
+          URL: ${{ steps.target.outputs.url }}
+
       - name: Run Lighthouse CI against live URL
         run: |
           npx --yes @lhci/cli@latest autorun \
             --config=./lighthouserc.live.json \
-            --collect.url="$URL" \
-            --collect.url="$URL/favorites" \
-            --collect.settings.extraHeaders="{\"x-vercel-protection-bypass\":\"${BYPASS}\"}"
+            --collect.url="$URL/" \
+            --collect.url="$URL/favorites"
         env:
           URL: ${{ steps.target.outputs.url }}
-          BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
-          OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
-          OPENWEATHER_BASE_URL: ${{ secrets.OPENWEATHER_BASE_URL }}
 
       - name: Upload Lighthouse reports
         if: always()
