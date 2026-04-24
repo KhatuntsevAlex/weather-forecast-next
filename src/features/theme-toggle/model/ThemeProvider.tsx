@@ -41,7 +41,7 @@ function applyTheme(resolved: ResolvedTheme) {
 
 const MEDIA = "(prefers-color-scheme: dark)";
 
-function subscribeSystemTheme(onChange: () => void): () => void {
+function subscribeSystemTheme(onChange: VoidFunction): VoidFunction {
   if (typeof window === "undefined") return () => {};
   const mql = window.matchMedia(MEDIA);
   mql.addEventListener("change", onChange);

@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { useHistoryStore } from "@/features/search-weather/model/historyStore";
 import { useNavigateToCity } from "@/features/search-weather/hooks/useNavigateToCity";
-import { cn, useHydrated } from "@/shared/lib";
+import { useHydrated } from "@/shared/lib";
+import { ScrollArrow } from "@/shared/ui";
 import { toast } from "sonner";
 
 const SCROLL_STEP = 240;
@@ -45,7 +46,7 @@ export function SearchHistory() {
 
   if (!hydrated || !history.length) return null;
 
-  const handleRemove = (e: React.MouseEvent, city: string) => {
+  const handleRemove = (e: React.MouseEvent<HTMLButtonElement>, city: string) => {
     e.stopPropagation();
     removeCity(city);
     toast("City removed from history", {
@@ -63,6 +64,14 @@ export function SearchHistory() {
     cancelAnimationFrame(animRef.current);
     const start = el.scrollLeft;
     const target = Math.max(0, Math.min(start + delta, el.scrollWidth - el.clientWidth));
+    // Respect the user's motion preference: jump to target instead of animating.
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      el.scrollLeft = target;
+      return;
+    }
     const duration = 300;
     let t0: number;
     const step = (ts: number) => {
@@ -75,6 +84,10 @@ export function SearchHistory() {
     animRef.current = requestAnimationFrame(step);
   };
 
+  const maskLeft = canLeft ? "transparent 0%, rgba(0,0,0,0.3) 8%, black 20%" : "black 0%";
+  const maskRight = canRight ? "black 80%, rgba(0,0,0,0.3) 92%, transparent 100%" : "black 100%";
+  const maskImage = `linear-gradient(to right, ${maskLeft}, ${maskRight})`;
+
   return (
     <div className="w-full">
       <h2
@@ -84,29 +97,20 @@ export function SearchHistory() {
         Recent searches
       </h2>
       <div className="relative flex justify-center">
-        {/* Left arrow */}
-        <button
-          type="button"
+        <ScrollArrow
+          direction="left"
+          visible={canLeft}
           onClick={() => scrollBy(-SCROLL_STEP)}
           aria-label="Scroll history left"
           aria-controls="search-history-list"
-          className={cn(
-            "absolute top-1/2 left-1 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full",
-            "bg-surface/90 border-border text-muted-foreground border backdrop-blur",
-            "hover:bg-surface-hover hover:text-foreground hover:border-border-hover",
-            "cursor-pointer transition-all duration-200",
-            canLeft ? "opacity-100" : "pointer-events-none opacity-0",
-          )}
-        >
-          ‹
-        </button>
+        />
         <div
           ref={scrollerCb}
           onScroll={updateArrows}
           className="max-w-full overflow-x-auto px-10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
           style={{
-            maskImage: `linear-gradient(to right, ${canLeft ? "transparent 0%, rgba(0,0,0,0.3) 8%, black 20%" : "black 0%"}, black ${canRight ? "80%" : "100%"}${canRight ? ", rgba(0,0,0,0.3) 92%, transparent 100%" : ""})`,
-            WebkitMaskImage: `linear-gradient(to right, ${canLeft ? "transparent 0%, rgba(0,0,0,0.3) 8%, black 20%" : "black 0%"}, black ${canRight ? "80%" : "100%"}${canRight ? ", rgba(0,0,0,0.3) 92%, transparent 100%" : ""})`,
+            maskImage,
+            WebkitMaskImage: maskImage,
             transition: "mask-image 200ms, -webkit-mask-image 200ms",
           }}
         >
@@ -118,7 +122,7 @@ export function SearchHistory() {
             {history.map((item) => (
               <li
                 key={item.city}
-                className="group bg-surface border-border text-muted-foreground hover:bg-surface-hover hover:text-foreground hover:border-border-hover flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm whitespace-nowrap transition-colors duration-150"
+                className="bg-surface border-border text-muted-foreground hover:bg-surface-hover hover:text-foreground hover:border-border-hover flex shrink-0 items-center gap-1.5 rounded-lg border px-3 py-1.5 text-sm whitespace-nowrap transition-colors duration-150"
               >
                 <button
                   onClick={() => navigateToCity(item.city)}
@@ -128,31 +132,22 @@ export function SearchHistory() {
                 </button>
                 <button
                   onClick={(e) => handleRemove(e, item.city)}
-                  className="text-muted ml-1 flex h-5 w-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-base leading-none transition-colors hover:bg-red-500/10 hover:text-red-400"
+                  className="text-muted ml-1 flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-base leading-none transition-colors hover:bg-red-500/10 hover:text-red-400"
                   aria-label={`Remove ${item.city}`}
                 >
-                  ×
+                  <span aria-hidden="true">×</span>
                 </button>
               </li>
             ))}
           </ul>
         </div>
-        {/* Right arrow */}
-        <button
-          type="button"
+        <ScrollArrow
+          direction="right"
+          visible={canRight}
           onClick={() => scrollBy(SCROLL_STEP)}
           aria-label="Scroll history right"
           aria-controls="search-history-list"
-          className={cn(
-            "absolute top-1/2 right-1 z-10 flex h-7 w-7 -translate-y-1/2 items-center justify-center rounded-full",
-            "bg-surface/90 border-border text-muted-foreground border backdrop-blur",
-            "hover:bg-surface-hover hover:text-foreground hover:border-border-hover",
-            "cursor-pointer transition-all duration-200",
-            canRight ? "opacity-100" : "pointer-events-none opacity-0",
-          )}
-        >
-          ›
-        </button>
+        />
       </div>
     </div>
   );

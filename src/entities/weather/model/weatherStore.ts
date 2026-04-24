@@ -9,7 +9,7 @@ interface WeatherState {
   isLoadingLocation: boolean;
   locationError: string | null;
   setCoords: (lat: number, lon: number) => void;
-  clearCoords: () => void;
+  clearCoords: VoidFunction;
   setUnits: (units: "metric" | "imperial") => void;
   setLoadingLocation: (loading: boolean) => void;
   setLocationError: (error: string | null) => void;

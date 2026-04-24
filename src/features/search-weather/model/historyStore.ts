@@ -14,8 +14,8 @@ interface HistoryState {
   removedStack: HistoryItem[];
   addCity: (city: string) => void;
   removeCity: (city: string) => void;
-  undoRemove: () => void;
-  clearHistory: () => void;
+  undoRemove: VoidFunction;
+  clearHistory: VoidFunction;
 }
 
 const MAX_HISTORY = 10;

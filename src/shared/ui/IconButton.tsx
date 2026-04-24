@@ -3,9 +3,9 @@ import { buttonBase, buttonVariants, type ButtonVariant, type ButtonSize } from 
 import { cn } from "@/shared/lib";
 
 const iconSizes: Record<ButtonSize, string> = {
-  sm: "w-8 h-8",
-  md: "w-10 h-10",
-  lg: "w-[50px] h-[50px]",
+  sm: "size-8",
+  md: "size-10",
+  lg: "size-[50px]",
 };
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {

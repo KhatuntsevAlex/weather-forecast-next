@@ -8,7 +8,7 @@ export default function RouteError({
   reset,
 }: {
   error: Error & { digest?: string };
-  reset: () => void;
+  reset: VoidFunction;
 }) {
   useEffect(() => {
     console.error("Route error", error);

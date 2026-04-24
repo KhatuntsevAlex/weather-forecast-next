@@ -61,7 +61,12 @@ describe("SearchHistory", () => {
     const user = userEvent.setup();
     render(<SearchHistory />);
 
-    await user.click(screen.getByRole("button", { name: /remove london/i }));
+    const removeBtn = screen.getByRole("button", { name: /remove london/i });
+    // The `×` glyph is decorative (aria-hidden); the accessible name must not
+    // include it, or screen readers would announce "multiplication sign".
+    expect(removeBtn).toHaveAccessibleName("Remove London");
+
+    await user.click(removeBtn);
 
     expect(useHistoryStore.getState().history.find((h) => h.city === "London")).toBeUndefined();
     expect(useHistoryStore.getState().removedStack[0]?.city).toBe("London");
@@ -70,7 +75,12 @@ describe("SearchHistory", () => {
   it("exposes scroll controls", () => {
     render(<SearchHistory />);
 
-    expect(screen.getByRole("button", { name: /scroll history left/i })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /scroll history right/i })).toBeInTheDocument();
+    // Scroll arrows have aria-hidden="true" when not visible, so query by hidden: true.
+    // When aria-hidden is true, the accessible name is empty.
+    // Use getAllByRole since there are two scroll arrows (left and right).
+    const buttons = screen.getAllByRole("button", { name: "", hidden: true });
+    expect(buttons).toHaveLength(2);
+    expect(buttons[0]).toHaveAttribute("aria-label", "Scroll history left");
+    expect(buttons[1]).toHaveAttribute("aria-label", "Scroll history right");
   });
 });
