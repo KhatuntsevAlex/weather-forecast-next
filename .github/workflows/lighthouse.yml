@@ -41,7 +41,10 @@ jobs:
       - name: Resolve target URL
         id: target
         run: |
-          URL="${{ github.event.deployment_status.environment_url || github.event.deployment_status.target_url || github.event.inputs.url }}"
+          # Always audit the stable production alias, not the per-deployment
+          # URL (which is protected by Vercel deployment protection and
+          # redirects to the SSO login page).
+          URL="${{ github.event.inputs.url }}"
           if [ -z "$URL" ]; then
             URL="https://weather-forecast-next-one.vercel.app"
           fi
