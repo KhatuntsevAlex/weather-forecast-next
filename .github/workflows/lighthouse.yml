@@ -18,13 +18,8 @@ concurrency:
 jobs:
   lighthouse:
     name: Lighthouse (desktop)
-    # Only run for successful PRODUCTION deployments.
-    # Preview deployments on Vercel include X-Robots-Tag: noindex which
-    # drops Lighthouse SEO below 0.95 and cannot be disabled.
-    if: >-
-      github.event_name == 'workflow_dispatch' ||
-      (github.event.deployment_status.state == 'success' &&
-       github.event.deployment_status.environment == 'Production')
+    # Run for any successful deployment (production or preview) or manual dispatch.
+    if: github.event_name == 'workflow_dispatch' || github.event.deployment_status.state == 'success'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -38,39 +33,55 @@ jobs:
       - name: Install deps
         run: npm ci
 
-      - name: Resolve target URL
+      - name: Resolve target URL and config
         id: target
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          DEPLOY_ENV: ${{ github.event.deployment_status.environment }}
+          DEPLOY_URL: ${{ github.event.deployment_status.environment_url }}
+          DEPLOY_TARGET_URL: ${{ github.event.deployment_status.target_url }}
+          INPUT_URL: ${{ github.event.inputs.url }}
+          BYPASS: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
         run: |
-          # Always audit the stable production alias, not the per-deployment
-          # URL (which is protected by Vercel deployment protection and
-          # redirects to the SSO login page).
-          URL="${{ github.event.inputs.url }}"
-          if [ -z "$URL" ]; then
-            URL="https://weather-forecast-next-one.vercel.app"
+          # Production: always audit the stable public alias, no bypass, strict config.
+          # Preview:    audit the deployment URL with bypass, relaxed config
+          #             (SEO capped ~0.63 due to Vercel's X-Robots-Tag: noindex).
+          if [ "$EVENT_NAME" = "workflow_dispatch" ] || [ "$DEPLOY_ENV" = "Production" ]; then
+            URL="${INPUT_URL:-https://weather-forecast-next-one.vercel.app}"
+            CONFIG="./lighthouserc.live.json"
+            QS=""
+          else
+            URL="${DEPLOY_URL:-$DEPLOY_TARGET_URL}"
+            CONFIG="./lighthouserc.preview.json"
+            QS="?x-vercel-protection-bypass=${BYPASS}&x-vercel-set-bypass-cookie=samesitenone"
           fi
-          # Strip trailing slash
           URL="${URL%/}"
           echo "url=$URL" >> "$GITHUB_OUTPUT"
-          echo "Auditing: $URL"
+          echo "config=$CONFIG" >> "$GITHUB_OUTPUT"
+          echo "qs=$QS" >> "$GITHUB_OUTPUT"
+          echo "Auditing: $URL (config=$CONFIG)"
 
       - name: Warm up URLs
         run: |
           for i in 1 2 3; do
-            curl -s -o /dev/null "$URL/" || true
-            curl -s -o /dev/null "$URL/favorites" || true
+            curl -s -o /dev/null "${URL}/${QS}" || true
+            curl -s -o /dev/null "${URL}/favorites${QS}" || true
             sleep 2
           done
         env:
           URL: ${{ steps.target.outputs.url }}
+          QS: ${{ steps.target.outputs.qs }}
 
       - name: Run Lighthouse CI against live URL
         run: |
           npx --yes @lhci/cli@latest autorun \
-            --config=./lighthouserc.live.json \
-            --collect.url="$URL/" \
-            --collect.url="$URL/favorites"
+            --config="$CONFIG" \
+            --collect.url="${URL}/${QS}" \
+            --collect.url="${URL}/favorites${QS}"
         env:
           URL: ${{ steps.target.outputs.url }}
+          QS: ${{ steps.target.outputs.qs }}
+          CONFIG: ${{ steps.target.outputs.config }}
 
       - name: Upload Lighthouse reports
         if: always()
