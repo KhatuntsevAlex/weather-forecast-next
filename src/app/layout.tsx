@@ -11,6 +11,7 @@ import {
 import { Header } from "@/widgets/header";
 import { InstallPrompt } from "@/features/pwa";
 import { AppToaster } from "@/shared/ui";
+import { getSiteUrl } from "@/shared/lib";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,6 +24,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const metadataBase = new URL(getSiteUrl());
+
 export const viewport: Viewport = {
   themeColor: "#0f1621",
   width: "device-width",
@@ -31,7 +34,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://weather-forecast.app"),
+  metadataBase,
   title: {
     default: "Weather Forecast",
     template: "%s — Weather Forecast",

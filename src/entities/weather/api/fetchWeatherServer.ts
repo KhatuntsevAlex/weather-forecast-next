@@ -1,10 +1,9 @@
 import "server-only";
 import { owmCurrent, transformCurrentWeather } from "./transformers";
 import { buildWeatherUrl } from "../lib/buildWeatherUrl";
+import { getValidatedEnv } from "@/shared/lib";
 import type { CurrentWeather } from "../model/types";
 import type { Units } from "../model/unitsCookie";
-
-const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
 interface SeedResult<T> {
   /** SWR cache key — identical to the URL the client's useSWR will request. */
@@ -24,8 +23,9 @@ export async function fetchCurrentWeatherServer(params: {
   city: string;
   units: Units;
 }): Promise<SeedResult<CurrentWeather> | null> {
-  const apiKey = process.env.OPENWEATHER_API_KEY;
-  const baseUrl = process.env.OPENWEATHER_BASE_URL || BASE_URL;
+  const env = getValidatedEnv();
+  const apiKey = env.OPENWEATHER_API_KEY;
+  const baseUrl = env.OPENWEATHER_BASE_URL;
   if (!apiKey || apiKey === "your_openweathermap_api_key_here") return null;
 
   const key = buildWeatherUrl("current", { city: params.city, units: params.units });
