@@ -28,5 +28,8 @@ export function getSiteUrl(env = getValidatedEnv()): string {
 }
 
 export function shouldTrustProxy(env = getValidatedEnv()): boolean {
+  // Only trust proxy headers when explicitly behind a trusted proxy.
+  // Vercel, Cloudflare, and most PaaS set TRUST_PROXY=1 (or equivalent);
+  // otherwise a client could forge x-forwarded-for to bypass rate limits.
   return env.TRUST_PROXY === "1" || env.VERCEL === "1" || env.NODE_ENV === "test";
 }

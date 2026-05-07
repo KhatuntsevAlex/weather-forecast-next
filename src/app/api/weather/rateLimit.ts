@@ -1,4 +1,4 @@
-import { getValidatedEnv } from "@/shared/lib";
+import { shouldTrustProxy } from "@/shared/lib";
 
 // Simple in-memory sliding-window rate limiter keyed by client identifier.
 // Suitable for a single Node process / small deployment; replace with
@@ -41,12 +41,7 @@ export function checkRateLimit(key: string, now = Date.now()): RateLimitResult {
 }
 
 export function getClientKey(request: Request): string {
-  // Only trust proxy headers when explicitly behind a trusted proxy.
-  // Vercel, Cloudflare, and most PaaS set TRUST_PROXY=1 (or equivalent);
-  // otherwise a client could forge x-forwarded-for to bypass rate limits.
-  const env = getValidatedEnv();
-  const trustProxy = env.TRUST_PROXY === "1" || env.VERCEL === "1" || env.NODE_ENV === "test";
-  if (trustProxy) {
+  if (shouldTrustProxy()) {
     const fwd = request.headers.get("x-forwarded-for");
     if (fwd) return fwd.split(",")[0]!.trim();
     const real = request.headers.get("x-real-ip");
