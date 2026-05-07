@@ -2,6 +2,14 @@
   "name": "weather-forecast-next",
   "version": "0.1.1",
   "private": true,
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/KhatuntsevAlex/weather-forecast-next.git"
+  },
+  "homepage": "https://weather-forecast-next-one.vercel.app",
+  "bugs": {
+    "url": "https://github.com/KhatuntsevAlex/weather-forecast-next/issues"
+  },
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build",

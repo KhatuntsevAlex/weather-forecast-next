@@ -7,8 +7,7 @@ import {
 } from "@/entities/weather/api/transformers";
 import { weatherQuerySchema } from "./schema";
 import { checkRateLimit, getClientKey, RATE_LIMIT } from "./rateLimit";
-
-const BASE_URL = "https://api.openweathermap.org/data/2.5";
+import { getValidatedEnv } from "@/shared/lib";
 
 // Same-origin only: reject requests whose Origin header doesn't match the app host.
 // Requests without an Origin header (same-origin GETs from the browser, curl, SSR)
@@ -30,8 +29,9 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Cross-origin requests are not allowed" }, { status: 403 });
   }
 
-  const apiKey = process.env.OPENWEATHER_API_KEY;
-  const baseUrl = process.env.OPENWEATHER_BASE_URL || BASE_URL;
+  const env = getValidatedEnv();
+  const apiKey = env.OPENWEATHER_API_KEY;
+  const baseUrl = env.OPENWEATHER_BASE_URL;
 
   if (!apiKey || apiKey === "your_openweathermap_api_key_here") {
     return NextResponse.json(
@@ -41,7 +41,7 @@ export async function GET(request: NextRequest) {
   }
 
   // Rate limit by client IP (skipped in tests for determinism).
-  if (process.env.NODE_ENV !== "test") {
+  if (env.NODE_ENV !== "test") {
     const rl = checkRateLimit(getClientKey(request));
     if (!rl.ok) {
       const retryAfter = Math.max(1, Math.ceil((rl.resetAt - Date.now()) / 1000));
