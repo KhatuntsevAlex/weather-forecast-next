@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.2](https://github.com/KhatuntsevAlex/weather-forecast-next/compare/weather-forecast-next-v0.1.1...weather-forecast-next-v0.1.2) (2026-05-07)
+
+
+### Features
+
+* **env:** add Zod env validation and centralize shared env helpers ([#24](https://github.com/KhatuntsevAlex/weather-forecast-next/issues/24)) ([d85c5d5](https://github.com/KhatuntsevAlex/weather-forecast-next/commit/d85c5d56cc72bc0513bf6890cdb229bb2a1b8b43))
+
+
+### Bug Fixes
+
+* address deprecated zod method usage ([#26](https://github.com/KhatuntsevAlex/weather-forecast-next/issues/26)) ([b5349aa](https://github.com/KhatuntsevAlex/weather-forecast-next/commit/b5349aac989001712e6f924d0498cb865cb1fd8f))
+
 ## [0.1.1](https://github.com/KhatuntsevAlex/weather-forecast-next/compare/weather-forecast-next-v0.1.0...weather-forecast-next-v0.1.1) (2026-04-23)
 
 
