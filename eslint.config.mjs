@@ -5,9 +5,17 @@ import prettier from "eslint-config-prettier";
 import boundaries from "eslint-plugin-boundaries";
 
 const eslintConfig = defineConfig([
+  globalIgnores(["*.config.{ts,mjs,js,cjs}", "tests/**"]),
   ...nextVitals,
   ...nextTs,
   prettier,
+  // Tell eslint-plugin-react the React version explicitly so it doesn't
+  // try to auto-detect it via context.getFilename() which was removed in ESLint 10.
+  {
+    settings: {
+      react: { version: "19" },
+    },
+  },
   // Ban nested ternaries — they turn into unreadable pyramids fast.
   // Max one level of `cond ? a : b`; use early returns / helper functions
   // / if/else for anything deeper.
