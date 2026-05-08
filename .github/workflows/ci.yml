@@ -127,7 +127,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Analyze bundle
-        run: pnpm analyze -- --output
+        run: pnpm exec next experimental-analyze --output
         env:
           OPENWEATHER_API_KEY: ${{ secrets.OPENWEATHER_API_KEY }}
 
