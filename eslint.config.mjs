@@ -5,6 +5,7 @@ import prettier from "eslint-config-prettier";
 import boundaries from "eslint-plugin-boundaries";
 
 const eslintConfig = defineConfig([
+  globalIgnores(["*.config.{ts,mjs,js,cjs}", "tests/**"]),
   ...nextVitals,
   ...nextTs,
   prettier,

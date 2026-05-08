@@ -163,33 +163,33 @@ OPENWEATHER_API_KEY=your_api_key_here
 ### Development
 
 ```bash
-npm run dev          # Next.js dev server with Turbopack on http://localhost:3000
+pnpm dev             # Next.js dev server with Turbopack on http://localhost:3000
 ```
 
 ### Build & Production
 
 ```bash
-npm run build        # Production build (also generates the service worker)
-npm start            # Serve production build
+pnpm build           # Production build (also generates the service worker)
+pnpm start           # Serve production build
 ```
 
 ## Scripts
 
-| Script                  | Description                                                               |
-| ----------------------- | ------------------------------------------------------------------------- |
-| `npm run dev`           | Start dev server (Turbopack)                                              |
-| `npm run build`         | Production build                                                          |
-| `npm start`             | Serve production build                                                    |
-| `npm run lint`          | ESLint                                                                    |
-| `npm run typecheck`     | TypeScript compile check (`tsc --noEmit`)                                 |
-| `npm run format`        | Prettier write                                                            |
-| `npm run format:check`  | Prettier check (used by CI)                                               |
-| `npm test`              | Run unit tests once (Vitest)                                              |
-| `npm run test:watch`    | Run tests in watch mode                                                   |
-| `npm run test:coverage` | Run tests with coverage report (70% threshold)                            |
-| `npm run test:e2e`      | Run Playwright E2E tests                                                  |
-| `npm run test:e2e:ui`   | Run Playwright with interactive UI                                        |
-| `npm run analyze`       | Run `next experimental-analyze` (interactive UI at http://127.0.0.1:4000) |
+| Script               | Description                                                               |
+| -------------------- | ------------------------------------------------------------------------- |
+| `pnpm dev`           | Start dev server (Turbopack)                                              |
+| `pnpm build`         | Production build                                                          |
+| `pnpm start`         | Serve production build                                                    |
+| `pnpm lint`          | ESLint                                                                    |
+| `pnpm typecheck`     | TypeScript compile check (`tsc --noEmit`)                                 |
+| `pnpm format`        | Prettier write                                                            |
+| `pnpm format:check`  | Prettier check (used by CI)                                               |
+| `pnpm test`          | Run unit tests once (Vitest)                                              |
+| `pnpm test:watch`    | Run tests in watch mode                                                   |
+| `pnpm test:coverage` | Run tests with coverage report (70% threshold)                            |
+| `pnpm test:e2e`      | Run Playwright E2E tests                                                  |
+| `pnpm test:e2e:ui`   | Run Playwright with interactive UI                                        |
+| `pnpm analyze`       | Run `next experimental-analyze` (interactive UI at http://127.0.0.1:4000) |
 
 ## Commit Convention
 
@@ -211,7 +211,7 @@ Bypass in emergencies: `git commit --no-verify` / `git push --no-verify`.
 
 GitHub Actions workflows under `.github/workflows/`:
 
-- **ci.yml** — on every PR and push to `main`: `format:check` → `lint` → `typecheck` → `test:coverage` → `build` → `npm audit`. Separate jobs run `commitlint` on PRs, Playwright E2E, and a bundle-analyzer report uploaded as an artifact.
+- **ci.yml** — on every PR and push to `main`: `format:check` → `lint` → `typecheck` → `test:coverage` → `build` → `pnpm audit`. Separate jobs run `commitlint` on PRs, Playwright E2E, and a bundle-analyzer report uploaded as an artifact.
 - **lighthouse.yml** — runs on each Vercel `deployment_status: success` (both preview and production) and audits the **live URL** with [Lighthouse CI](https://github.com/GoogleChrome/lighthouse-ci) against configured budgets (performance ≥ 70, a11y / best-practices / SEO ≥ 95). Can also be triggered manually via `workflow_dispatch`.
 - **codeql.yml** — GitHub's static analysis for JS/TS with `security-and-quality` queries, runs on push, PR, and weekly schedule.
 - **release-please.yml** — [release-please](https://github.com/googleapis/release-please-action) opens a rolling "Release PR" based on Conventional Commits; merging it bumps the version, updates `CHANGELOG.md`, and tags a GitHub Release.
