@@ -145,7 +145,7 @@ tests/
 
 ### Prerequisites
 
-- Node.js 20+ (see [.nvmrc](.nvmrc))
+- Node.js 24+ (see [.nvmrc](.nvmrc))
 - An [OpenWeatherMap](https://openweathermap.org/api) API key (free tier works)
 
 ### Setup
