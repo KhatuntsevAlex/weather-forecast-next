@@ -107,7 +107,7 @@ export function SearchHistory() {
         <div
           ref={scrollerCb}
           onScroll={updateArrows}
-          className="max-w-full overflow-x-auto px-10 [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+          className="max-w-full [scrollbar-width:none] overflow-x-auto px-10 [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           style={{
             maskImage,
             WebkitMaskImage: maskImage,
