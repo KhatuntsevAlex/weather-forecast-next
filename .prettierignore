@@ -12,5 +12,6 @@ public/sw.js.map
 public/swe-worker-*.js
 public/workbox-*.js
 package-lock.json
+pnpm-lock.yaml
 CHANGELOG.md
 next-env.d.ts
